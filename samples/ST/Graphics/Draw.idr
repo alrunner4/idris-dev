@@ -36,7 +36,7 @@ interface Draw (m : Type -> Type) where
   Surface : Type
 
   initWindow : Int -> Int -> ST m (Maybe Var) [addIfJust Surface]
-  closeWindow : (win : Var) -> ST m () [remove win Surface] 
+  closeWindow : (win : Var) -> ST m () [remove win Surface]
 
   flip : (win : Var) -> ST m () [win ::: Surface]
   poll : ST m (Maybe Event) []

@@ -1,6 +1,7 @@
 module Data.List
 
 %access public export
+%default total
 
 ||| A proof that some element is found in a list.
 |||
@@ -52,6 +53,10 @@ isElem x (y :: xs) with (decEq x y)
     isElem x (y :: xs) | (No xneqy) | (Yes xinxs) = Yes (There xinxs)
     isElem x (y :: xs) | (No xneqy) | (No xninxs) = No (neitherHereNorThere xneqy xninxs)
 
+getElem : (xs : List a) -> (p : Elem x xs) -> a
+getElem (x :: ys) Here = x
+getElem (_ :: ys) (There p) = getElem ys p
+
 ||| Remove the element at the given position.
 |||
 ||| @xs The list to be removed from
@@ -59,6 +64,13 @@ isElem x (y :: xs) with (decEq x y)
 dropElem : (xs : List a) -> (p : Elem x xs) -> List a
 dropElem (x :: ys) Here = ys
 dropElem (x :: ys) (There p) = x :: dropElem ys p
+
+updateElem : (a -> a) -> (xs : List a) -> Elem x xs -> List a
+updateElem f (x :: xs) Here = f x :: xs
+updateElem f (x :: xs) (There p) = x :: updateElem f xs p
+
+replaceElem : a -> (xs : List a) -> Elem x xs -> List a
+replaceElem x xs e = updateElem(\_ => x) xs e
 
 ||| The intersectBy function returns the intersect of two lists by user-supplied equality predicate.
 intersectBy : (a -> a -> Bool) -> List a -> List a -> List a
@@ -72,3 +84,4 @@ intersectBy eq xs ys = [x | x <- xs, any (eq x) ys]
 |||
 intersect : (Eq a) => List a -> List a -> List a
 intersect = intersectBy (==)
+
